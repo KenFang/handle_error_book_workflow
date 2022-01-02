@@ -9,7 +9,7 @@
         "near.$": "$.museum.museum_name",
         "start_date.$": "$.hotel.start_date"
       },
-      "Resource": "arn:aws:lambda:ap-northeast-1:493015157319:function:BookHotelClientS1P3",
+      "Resource": "arn:aws:lambda:region:accountId:function:BookHotelClient",
       "ResultPath": "$.hotel",
       "Type": "Task",
       "Retry": [
@@ -63,7 +63,7 @@
         "museum_name.$": "$.museum.museum_name",
         "when.$": "$.museum.when"
       },
-      "Resource": "arn:aws:lambda:ap-northeast-1:493015157319:function:BookMuseumClientS1P3",
+      "Resource": "arn:aws:lambda:region:accountId:function:BookMuseumClient",
       "ResultPath": "$.museum",
       "Type": "Task",
       "Retry": [
@@ -86,7 +86,7 @@
     "CancelHotelState": {
       "Type": "Task",
       "Next": "BookMuseumAllFallback",
-      "Resource": "arn:aws:lambda:ap-northeast-1:493015157319:function:CancelHotelServerS1P3"
+      "Resource": "arn:aws:lambda:region:accountId:function:CancelHotelServer"
     },
     "BookMuseumAllFallback": {
       "Type": "Fail",
