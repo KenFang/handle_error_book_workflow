@@ -2,44 +2,49 @@
   "StartAt": "BookHotelState",
   "States": {
     "BookHotelState": {
-      "Type": "Task",
+      "Next": "BookMuseumState",
       "Parameters": {
         "buyer_id.$": "$.purchase.buyer_id",
         "end_date.$": "$.hotel.end_date",
         "near.$": "$.museum.museum_name",
         "start_date.$": "$.hotel.start_date"
       },
-      "Resource": "arn:aws:lambda:[Regional]:[Account_ID]:function:BookHotelClient",
+      "Resource": "arn:aws:lambda:ap-northeast-1:493015157319:function:BookHotelClientS1P3",
+      "ResultPath": "$.hotel",
+      "Type": "Task",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "TransientError"
+          ],
+          "MaxAttempts": 3
+        }
+      ],
       "Catch": [
         {
-          "ErrorEquals": ["InvalidInputError"],
+          "ErrorEquals": [
+            "InvalidInputError"
+          ],
           "Next": "BookHotelInvalidInputError"
         },
         {
-          "ErrorEquals": ["TransientError"],
-          "Next": "BookHotelTransientError"
-        },
-        {
-          "ErrorEquals": ["States.TaskFailed"],
+          "ErrorEquals": [
+            "States.TaskFailed"
+          ],
           "Next": "BookHotelFallback"
         },
         {
-          "ErrorEquals": ["States.ALL"],
+          "ErrorEquals": [
+            "States.ALL"
+          ],
           "Next": "BookHotelAllFallback"
         }
-      ],
-      "ResultPath": "$.hotel",
-      "Next": "BookMuseumState"
+      ]
     },
     "BookHotelInvalidInputError": {
       "Type": "Fail",
       "Error": "InvalidInputError",
       "Cause": "This is a fallback from a BookHotel Lambda function exception; Invalid Input Error."
-    },
-    "BookHotelTransientError": {
-      "Type": "Fail",
-      "Error": "TransientError",
-      "Cause": "This is a fallback from a BookHotel Lambda function exception; Transient Error."
     },
     "BookHotelFallback": {
       "Type": "Fail",
@@ -52,48 +57,36 @@
       "Cause": "This is a fallback from any error code in BookHotel Lambda function."
     },
     "BookMuseumState": {
-      "Type": "Task",
+      "End": true,
       "Parameters": {
         "buyer_id.$": "$.purchase.buyer_id",
         "museum_name.$": "$.museum.museum_name",
         "when.$": "$.museum.when"
       },
-      "Resource": "arn:aws:lambda:[Regional]:[Account]:function:BookMuseumClient",
-      "Catch": [
+      "Resource": "arn:aws:lambda:ap-northeast-1:493015157319:function:BookMuseumClientS1P3",
+      "ResultPath": "$.museum",
+      "Type": "Task",
+      "Retry": [
         {
-          "ErrorEquals": ["InvalidInputError"],
-          "Next": "BookMuseumInvalidInputError"
-        },
-        {
-          "ErrorEquals": ["TransientError"],
-          "Next": "BookMuseumTransientError"
-        },
-        {
-          "ErrorEquals": ["States.TaskFailed"],
-          "Next": "BookMuseumFallback"
-        },
-        {
-          "ErrorEquals": ["States.ALL"],
-          "Next": "BookMuseumAllFallback"
+          "ErrorEquals": [
+            "TransientError"
+          ],
+          "MaxAttempts": 3
         }
       ],
-      "ResultPath": "$.museum",
-      "End": true
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "CancelHotelState"
+        }
+      ]
     },
-    "BookMuseumInvalidInputError": {
-      "Type": "Fail",
-      "Error": "InvalidInputError",
-      "Cause": "This is a fallback from a BookMuseum Lambda function exception; Invalid Input Error."
-    },
-    "BookMuseumTransientError": {
-      "Type": "Fail",
-      "Error": "TransientError",
-      "Cause": "This is a fallback from a BookMuseum Lambda function exception; Transient Error."
-    },
-    "BookMuseumFallback": {
-      "Type": "Fail",
-      "Error": "States.TaskFailed",
-      "Cause": "This is a fallback from a reserved error code in BookMuseum Lambda function."
+    "CancelHotelState": {
+      "Type": "Task",
+      "Next": "BookMuseumAllFallback",
+      "Resource": "arn:aws:lambda:ap-northeast-1:493015157319:function:CancelHotelServerS1P3"
     },
     "BookMuseumAllFallback": {
       "Type": "Fail",
