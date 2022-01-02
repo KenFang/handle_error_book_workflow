@@ -33,7 +33,7 @@ async function checkResponseStatus(response) {
     } else if (response.status === 503) {
         throw new TransientError(`The HTTP status of the response is ${response.status} ; Transient Error`);
     } else {
-        throw new Error("There was an unknown error with hotel booking process.");
+        throw new Error("There was an unknown error with museum booking process.");
     }
 }
 
