@@ -36,15 +36,11 @@ async function checkResponseStatus(response) {
 }
 
 exports.handler = async (evt) => {
-    try {
-        // fetch the request
-        let response = await fetch(BOOKING_SERVICE, {
-            method: 'POST',
-            body: JSON.stringify(evt)
-        })
-        let body = await checkResponseStatus(response);
-        return await body.json();
-    } catch (err) {
-        console.error(err.message);
-    }
+    // fetch the request
+    let response = await fetch(BOOKING_SERVICE, {
+        method: 'POST',
+        body: JSON.stringify(evt)
+    })
+    let body = await checkResponseStatus(response);
+    return await body.json();
 }
